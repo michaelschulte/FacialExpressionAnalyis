@@ -1,0 +1,8 @@
+Instructions:
+1. Ensure there are two folders: 'jpg' and 'output'
+2. In the jpg folder, a child folder is required for each series of pictures
+3. Ensure that a ffmpeg binary is present either in the PATH or in the folder itself.
+(Get it from: https://ffmpeg.org/download.html or from your preferred distribution system.)
+4. Run from a unix shell using './ffmpeg.sh' or './ffmpeg_MK.sh'
+(On windows: Use either the "Subsystem for UNIX-based applications" in Windows 10 or something like cygwin/MINGW64)
+5. Enjoy the videos found in 'output'
