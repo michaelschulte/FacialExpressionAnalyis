@@ -7,41 +7,55 @@ rm(list = ls())
 source('iMotionsHelperFunctions.R')
 source('R_Packages+OwnFunctions.R')
 
-load(file = '../data/adfes_baselined.Rdata')
-load(file = '../data/rafd_baselined.Rdata')
-load(file = '../data/wsefep_baselined.Rdata')
+baselined = F
+# load (non-)baselined data
+if(baselined) {
+  print("Load baselined")
+  load(file = '../data/adfes_baselined.Rdata')
+  load(file = '../data/rafd_baselined.Rdata')
+  load(file = '../data/wsefep_baselined.Rdata')
+  adfes <- adfes_baselined
+  rafd <- rafd_baselined
+  wsefep <- wsefep_baselined
+  rm(adfes_baselined, rafd_baselined, wsefep_baselined)
+} else {
+  print("Load non-baselined")
+  load(file = '../data/adfes_nb.Rdata')
+  load(file = '../data/rafd_nb.Rdata')
+  load(file = '../data/wsefep_nb.Rdata')
+}
 
 # standardize StimulusNames
-adfes_baselined[adfes_baselined$StimulusName == "Sad","StimulusName"] <- "Sadness"
+adfes[adfes$StimulusName == "Sad","StimulusName"] <- "Sadness"
 
-rafd_baselined$StimulusName <- ifelse(rafd_baselined$StimulusName == "angry", "Anger",
-                               ifelse(rafd_baselined$StimulusName == "contemptuous", "Contempt",
-                               ifelse(rafd_baselined$StimulusName == "disgusted", "Disgust",
-                               ifelse(rafd_baselined$StimulusName == "fearful", "Fear",
-                               ifelse(rafd_baselined$StimulusName == "happy", "Joy",
-                               ifelse(rafd_baselined$StimulusName == "sad", "Sadness",
-                               ifelse(rafd_baselined$StimulusName == "surprised", "Surprise",
-                               ifelse(rafd_baselined$StimulusName == "neutral", "Neutral", NA))))))))
+rafd$StimulusName <- ifelse(rafd$StimulusName == "angry", "Anger",
+                            ifelse(rafd$StimulusName == "contemptuous", "Contempt",
+                            ifelse(rafd$StimulusName == "disgusted", "Disgust",
+                            ifelse(rafd$StimulusName == "fearful", "Fear",
+                            ifelse(rafd$StimulusName == "happy", "Joy",
+                            ifelse(rafd$StimulusName == "sad", "Sadness",
+                            ifelse(rafd$StimulusName == "surprised", "Surprise",
+                            ifelse(rafd$StimulusName == "neutral", "Neutral", NA))))))))
 
-wsefep_baselined$StimulusName <- ifelse(wsefep_baselined$StimulusName == "anger", "Anger",
-                                 ifelse(wsefep_baselined$StimulusName == "disgust", "Disgust",
-                                 ifelse(wsefep_baselined$StimulusName == "fear", "Fear",
-                                 ifelse(wsefep_baselined$StimulusName == "joy", "Joy",
-                                 ifelse(wsefep_baselined$StimulusName == "sadness", "Sadness",
-                                 ifelse(wsefep_baselined$StimulusName == "surprise", "Surprise",
-                                 ifelse(wsefep_baselined$StimulusName == "neutral", "Neutral", NA)))))))
+wsefep$StimulusName <- ifelse(wsefep$StimulusName == "anger", "Anger",
+                              ifelse(wsefep$StimulusName == "disgust", "Disgust",
+                              ifelse(wsefep$StimulusName == "fear", "Fear",
+                              ifelse(wsefep$StimulusName == "joy", "Joy",
+                              ifelse(wsefep$StimulusName == "sadness", "Sadness",
+                              ifelse(wsefep$StimulusName == "surprise", "Surprise",
+                              ifelse(wsefep$StimulusName == "neutral", "Neutral", NA)))))))
 
 # remove unwanted stimuli
-adfes_baselined <- adfes_baselined %>% filter(!(StimulusName %in% c("Embarrass", "Neutral", "Pride")))
-rafd_baselined <- rafd_baselined %>% filter(StimulusName != "Neutral")
-wsefep_baselined <- wsefep_baselined %>% filter(StimulusName != "Neutral")
+adfes <- adfes %>% filter(!(StimulusName %in% c("Embarrass", "Neutral", "Pride")))
+rafd <- rafd %>% filter(StimulusName != "Neutral")
+wsefep <- wsefep %>% filter(StimulusName != "Neutral")
 
 # combine datasets
-all_baselined <- rbind(adfes_baselined, rbind(rafd_baselined, wsefep_baselined))
+all <- rbind(adfes, rbind(rafd, wsefep))
 
 
 ### get Max Values
-respdata_max <- all_baselined %>%
+respdata_max <- all %>%
   group_by(Name, StimulusName, Dataset) %>%
   
   # get max for each Name-StimulusName-Dataset combination
@@ -63,6 +77,9 @@ respdata_max <- all_baselined %>%
   # transform into long format
   gather(EmotionMeasure, EmotionValue, -Name, -StimulusName, -Dataset) %>%
   
+  # recode to NA if a whole stimulus had only NAs, resulting in summarise(max()) values -INF
+  mutate(EmotionValue = ifelse(EmotionValue == -Inf, NA, EmotionValue)) %>%
+  
   # separate algorithms
   separate(EmotionMeasure, c("EmotionMeasure", "Algorithm")) %>%
   
@@ -82,4 +99,4 @@ respdata_max <- all_baselined %>%
   mutate(DI_norm = (DI - mean(DI, na.rm = T))/sd(DI, na.rm = T))
 
 # save
-save(respdata_max, file = '../data/respdata_max.Rdata')
+save(respdata_max, file = paste0('../data/respdata_max', ifelse(baselined, '_baselined', '_nb'), '.Rdata'))

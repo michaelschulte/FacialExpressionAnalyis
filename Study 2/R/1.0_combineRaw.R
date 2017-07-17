@@ -14,8 +14,8 @@ rawdata <- read.csv(file=filelist[1], header = TRUE, sep = '\t', blank.lines.ski
 
 # load all the remaining files, merge them
 for (file in filelist[2:length(filelist)]) {
-    tempdata <- read.csv(file=file, header = TRUE, sep = '\t', blank.lines.skip = TRUE, stringsAsFactors=FALSE, encoding = "UTF-8", skip=5)
-    rawdata <- rbind(rawdata, tempdata)
+  tempdata <- read.csv(file=file, header = TRUE, sep = '\t', blank.lines.skip = TRUE, stringsAsFactors=FALSE, encoding = "UTF-8", skip=5)
+  rawdata <- rbind(rawdata, tempdata)
 }
 
 # load survey data
@@ -24,4 +24,4 @@ surveydata <- read.csv(file="../data/surveydata/Validierungsstudie_Analysis - ME
 
 # save
 save(rawdata, file = '../data/rawdata.Rdata')
-save(surveydata, file = '../data/surveydata/surveydata.Rdata')
+save(surveydata, file = '../data/surveydata.Rdata')

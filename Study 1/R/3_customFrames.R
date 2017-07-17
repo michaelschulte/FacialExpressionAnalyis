@@ -7,23 +7,35 @@ rm(list = ls())
 source('iMotionsHelperFunctions.R')
 source('R_Packages+OwnFunctions.R')
 
-load(file = '../data/adfes_baselined.Rdata')
-load(file = '../data/rafd_baselined.Rdata')
-load(file = '../data/wsefep_baselined.Rdata')
+baselined = F
+# load (non-)baselined data
+if(baselined) {
+  load(file = '../data/adfes_baselined.Rdata')
+  load(file = '../data/rafd_baselined.Rdata')
+  load(file = '../data/wsefep_baselined.Rdata')
+  adfes <- adfes_baselined
+  rafd <- rafd_baselined
+  wsefep <- wsefep_baselined
+  rm(adfes_baselined, rafd_baselined, wsefep_baselined)
+} else {
+  load(file = '../data/adfes.Rdata')
+  load(file = '../data/rafd.Rdata')
+  load(file = '../data/wsefep.Rdata')
+}
 
-adfes_baselined <- adfes_baselined %>% 
+adfes <- adfes %>% 
   group_by(Name, StimulusName) %>%
   mutate(FrameNo.os = seq(0,length(StimulusName)-1))
 
-rafd_baselined <- rafd_baselined %>% 
+rafd <- rafd %>% 
   group_by(Name, StimulusName) %>%
   mutate(FrameNo.os = seq(0,length(StimulusName)-1))
 
-wsefep_baselined <- wsefep_baselined %>% 
+wsefep <- wsefep %>% 
   group_by(Name, StimulusName) %>%
   mutate(FrameNo.os = seq(0,length(StimulusName)-1))
 
-#save
-save(adfes_baselined, file = '../data/adfes_baselined.Rdata')
-save(rafd_baselined, file = '../data/rafd_baselined.Rdata')
-save(wsefep_baselined, file = '../data/wsefep_baselined.Rdata')
+# save according to baseliend flag
+save(adfes, file = paste0('../data/adfes', ifelse(baselined, '_baselined', '_nb'), '.Rdata'))
+save(rafd, file = paste0('../data/rafd', ifelse(baselined, '_baselined', '_nb'), '.Rdata'))
+save(wsefep, file = paste0('../data/wsefep', ifelse(baselined, '_baselined', '_nb'), '.Rdata'))

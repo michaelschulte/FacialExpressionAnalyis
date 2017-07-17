@@ -94,14 +94,14 @@ rm(adfes_baseline, rafd_baseline, wsefep_baseline)
 
 ### subtract baseline
 adfes_baselined[c(emotionColsAffectiva(),emotionColsFacet())] <-
-    adfes_baselined[c(emotionColsAffectiva(),emotionColsFacet())] -
-    adfes_baselined[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]
+  adfes_baselined[c(emotionColsAffectiva(),emotionColsFacet())] -
+  adfes_baselined[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]
 rafd_baselined[c(emotionColsAffectiva(),emotionColsFacet())] <-
-    rafd_baselined[c(emotionColsAffectiva(),emotionColsFacet())] -
-    rafd_baselined[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]
+  rafd_baselined[c(emotionColsAffectiva(),emotionColsFacet())] -
+  rafd_baselined[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]
 wsefep_baselined[c(emotionColsAffectiva(),emotionColsFacet())] <-
-    wsefep_baselined[c(emotionColsAffectiva(),emotionColsFacet())] -
-    wsefep_baselined[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]
+  wsefep_baselined[c(emotionColsAffectiva(),emotionColsFacet())] -
+  wsefep_baselined[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]
 
 # remove '_baseline' cols
 adfes_baselined <- adfes_baselined[!(names(adfes_baselined) %in%

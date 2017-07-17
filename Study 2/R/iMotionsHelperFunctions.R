@@ -21,7 +21,7 @@ iMotionsBaseline <- function(filename, respName, dataframe=NULL) {
   # separate emotion and value
   baseline <- unlist(strsplit(baseline," "))
   
-  if(is.null(dataframe)) {
+  if (is.null(dataframe)) {
     temp <- data.frame()
     temp <- rbind(temp,append(c(respName),values))
     colnames(temp) <- append(c("Name"), emotions)
@@ -45,7 +45,7 @@ iMotionsBaselineCustom <- function(dataframe, stimulusName, baselinedata=NULL) {
   values <- colMeans(na.omit(temp))
   respName <- dataframe$Name[1]
   
-  if(is.null(baselinedata)) {
+  if (is.null(baselinedata)) {
     temp <- data.frame()
     temp <- rbind(temp,append(c(respName), values))
     colnames(temp) <- append(c("Name"), emotions)

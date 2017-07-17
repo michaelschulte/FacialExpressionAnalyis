@@ -7,11 +7,21 @@ rm(list = ls())
 source('iMotionsHelperFunctions.R')
 source('R_Packages+OwnFunctions.R')
 
-load(file = '../data/idata_baselined_median.Rdata')
+# load (non-)baselined data and ratings
+baselined = F
+if (baselined) {
+  print("Load baselined")
+  load(file = '../data/idata_baselined_median.Rdata')
+  idata <- idata_baselined_median
+  rm(idata_baselined_median)
+} else {
+  print("Load non-baselined")
+  load(file = '../data/idata_clean.Rdata')  
+}
 load(file = '../data/ratings.Rdata')
 
 # remove Mimicry data
-idata_baselined_median <- idata_baselined_median %>%
+idata <- idata %>%
   filter(!grepl("^M", StimulusName))
 
 # add Max.Rating column
@@ -34,7 +44,7 @@ ratings_valence <- ratings %>%
 
 
 ### Max for each Name-Stimulus in long format
-idata_long_max <- idata_baselined_median %>%
+idata_long_max <- idata %>%
   # remove irrelevant stimuli:
   # - neutral for GAPED
   # - arousal high/low for IAPS
@@ -62,6 +72,9 @@ idata_long_max <- idata_baselined_median %>%
   gather(EmotionMeasure, EmotionValue, -Name, -StimulusName) %>%
   arrange(Name, StimulusName) %>%
   
+  # recode to NA if a whole stimulus had only NAs, resulting in summarise(max()) values -INF
+  mutate(EmotionValue = ifelse(EmotionValue == -Inf, NA, EmotionValue)) %>%
+  
   # separate algorithms
   separate(EmotionMeasure, c("EmotionMeasure", "Algorithm")) %>%
   
@@ -82,7 +95,7 @@ rafd_long_max <- idata_long_max %>%
                         ifelse(StimulusName == "SMsur", "Surprise", NA))))))))
                         
 idata_long_max <- idata_long_max %>%
-    filter(!grepl("^SM", StimulusName))
+  filter(!grepl("^SM", StimulusName))
 
 
 ### Valence: collapse into Positive/Negative Measure
@@ -100,6 +113,10 @@ idata_long_valence <- idata_long_max %>%
             Mean = mean(EmotionValue, na.rm = TRUE),
             Max = max(EmotionValue, na.rm = TRUE)) %>%
   gather(MeasureType, EmotionValue, Median, Mean, Max) %>%
+
+  # recode to NA if a whole stimulus had only NAs, resulting in summarise(max()) values -INF
+  mutate(EmotionValue = ifelse(EmotionValue == -Inf, NA, EmotionValue)) %>%
+  
   arrange(Name, StimulusName)
 
 
@@ -198,7 +215,7 @@ respdata_max_4 <- rafd_long_max %>%
   
   # normalized DI
   group_by(Algorithm) %>%
-  mutate(DI_norm = (DI - mean(DI, na.rm = T))/sd(DI, na.rm = T))    
+  mutate(DI_norm = (DI - mean(DI, na.rm = T))/sd(DI, na.rm = T))
 
 
 ### insert Dataset and StimulusValence columns
@@ -221,11 +238,24 @@ respdata_max_4 <- respdata_max_4 %>%
                            "Negative")))
 
 # save
-save(respdata_max_1, file = '../data/respdata_max_1.Rdata')
-save(respdata_max_2, file = '../data/respdata_max_2.Rdata')
-save(respdata_max_3, file = '../data/respdata_max_3.Rdata')
-save(respdata_max_4, file = '../data/respdata_max_4.Rdata')
-
-save(idata_long_valence, file = '../data/idata_long_valence.Rdata')
-save(idata_long_max, file = '../data/idata_long_max.Rdata')
-save(rafd_long_max, file = '../data/rafd_long_max.Rdata')
+if(baselined) {
+  save(respdata_max_1, file = '../data/respdata_max_1.Rdata')
+  save(respdata_max_2, file = '../data/respdata_max_2.Rdata')
+  save(respdata_max_3, file = '../data/respdata_max_3.Rdata')
+  save(respdata_max_4, file = '../data/respdata_max_4.Rdata')
+  
+  save(idata_long_valence, file = '../data/idata_long_valence.Rdata')
+  save(idata_long_max, file = '../data/idata_long_max.Rdata')
+  save(rafd_long_max, file = '../data/rafd_long_max.Rdata')
+} else {
+  save(respdata_max_1, file = '../data/respdata_max_1_nb.Rdata')
+  save(respdata_max_2, file = '../data/respdata_max_2_nb.Rdata')
+  save(respdata_max_3, file = '../data/respdata_max_3_nb.Rdata')
+  save(respdata_max_4, file = '../data/respdata_max_4_nb.Rdata')
+  
+  save(idata_long_valence, file = '../data/idata_long_valence_nb.Rdata')
+  save(idata_long_max, file = '../data/idata_long_max_nb.Rdata')
+  save(rafd_long_max, file = '../data/rafd_long_max_nb.Rdata')
+}
+save(ratings_emotions, file = '../data/ratings_emotions.Rdata')
+save(ratings_valence, file = '../data/ratings_valence.Rdata')

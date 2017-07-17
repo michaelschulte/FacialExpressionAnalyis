@@ -7,10 +7,21 @@ rm(list = ls())
 source('iMotionsHelperFunctions.R')
 source('R_Packages+OwnFunctions.R')
 
-load(file = '../data/respdata_max_1.Rdata')
-load(file = '../data/respdata_max_2.Rdata')
-load(file = '../data/respdata_max_3.Rdata')
-load(file = '../data/respdata_max_4.Rdata')
+baselined = F
+# load (non-)baselined data
+if (baselined) {
+  print("Load baselined")
+  load(file = '../data/respdata_max_1.Rdata')
+  load(file = '../data/respdata_max_2.Rdata')
+  load(file = '../data/respdata_max_3.Rdata')
+  load(file = '../data/respdata_max_4.Rdata')
+} else {
+  print("Load non-baselined")
+  load(file = '../data/respdata_max_1_nb.Rdata')
+  load(file = '../data/respdata_max_2_nb.Rdata')
+  load(file = '../data/respdata_max_3_nb.Rdata')
+  load(file = '../data/respdata_max_4_nb.Rdata')
+}
 
 # use MeasureType Max for valence calculation
 respdata_max_2 <- respdata_max_2 %>% filter(MeasureType == "Max")
@@ -142,15 +153,6 @@ stimuliwise_classified_4 <- respdata_max_4 %>%
             DI_norm = mean(DI_norm[Match == 1], na.rm = TRUE)) %>%
   arrange(StimulusName, Algorithm)
 
-### Aggrate databasewise (over all respondents-stimuli) ###
-valencewise_classified_4 <- respdata_max_4 %>%
-  group_by(StimulusValence, Algorithm) %>%
-  summarise(Correct = sum(Match, na.rm = TRUE),
-            Occurence = n(),
-            Detected = sum(!is.na(EmotionValue)),
-            MS = Correct/Occurence,
-            DI = mean(DI[Match == 1], na.rm = TRUE),
-            DI_norm = mean(DI_norm[Match == 1], na.rm = TRUE))
 
 ### Aggrate over complete df (over all respondents-stimuli) ###
 globally_classified_4 <- respdata_max_4 %>%
@@ -162,50 +164,60 @@ globally_classified_4 <- respdata_max_4 %>%
             DI = mean(DI[Match == 1], na.rm = TRUE),
             DI_norm = mean(DI_norm[Match == 1], na.rm = TRUE))
 
+### Aggrate over complete df (over all respondents-stimuli) ###
+algorithmwise_classified_4 <- respdata_max_4 %>%
+  group_by(Algorithm, StimulusName) %>%
+  summarise(Correct = sum(Match, na.rm = TRUE),
+            Occurence = n(),
+            Detected = sum(!is.na(EmotionValue)),
+            MS = Correct/Occurence,
+            DI = mean(DI[Match == 1], na.rm = TRUE),
+            DI_norm = mean(DI_norm[Match == 1], na.rm = TRUE))
 
-### Save
-write.table(stimuliwise_classified_1, file = paste0('../data/output/stimuliwise_classified_1.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(valencewise_classified_1, file = paste0('../data/output/valencewise_classified_1.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(globally_classified_1, file = paste0('../data/output/globally_classified_1.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(globally_classified_4, file = paste0('../data/output/globally_classified_4.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-write.table(stimuliwise_classified_2, file = paste0('../data/output/stimuliwise_classified_2.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(valencewise_classified_2, file = paste0('../data/output/valencewise_classified_2.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(globally_classified_2, file = paste0('../data/output/globally_classified_2.csv'),
-            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-write.table(stimuliwise_classified_3, file = paste0('../data/output/stimuliwise_classified_3.csv'),
+### Save with matching suffix (none or _nb)
+write.table(stimuliwise_classified_1, file = paste0('../data/output/stimuliwise_classified_1', ifelse(baselined, '', '_nb'), '.csv'),
             sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(valencewise_classified_3, file = paste0('../data/output/valencewise_classified_3.csv'),
+write.table(valencewise_classified_1, file = paste0('../data/output/valencewise_classified_1', ifelse(baselined, '', '_nb'), '.csv'),
             sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(globally_classified_3, file = paste0('../data/output/globally_classified_3.csv'),
+write.table(globally_classified_1, file = paste0('../data/output/globally_classified_1', ifelse(baselined, '', '_nb'), '.csv'),
             sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-write.table(stimuliwise_classified_4, file = paste0('../data/output/stimuliwise_classified_4.csv'),
+write.table(stimuliwise_classified_2, file = paste0('../data/output/stimuliwise_classified_2', ifelse(baselined, '', '_nb'), '.csv'),
             sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(valencewise_classified_4, file = paste0('../data/output/valencewise_classified_4.csv'),
+write.table(valencewise_classified_2, file = paste0('../data/output/valencewise_classified_2', ifelse(baselined, '', '_nb'), '.csv'),
             sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
-write.table(globally_classified_4, file = paste0('../data/output/globally_classified_4.csv'),
+write.table(globally_classified_2, file = paste0('../data/output/globally_classified_2', ifelse(baselined, '', '_nb'), '.csv'),
             sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-save(stimuliwise_classified_1, file = paste0('../data/stimuliwise_classified_1.Rdata'))
-save(valencewise_classified_1, file = paste0('../data/valencewise_classified_1.Rdata'))
-save(globally_classified_1, file = paste0('../data/globally_classified_1.Rdata'))
+write.table(stimuliwise_classified_3, file = paste0('../data/output/stimuliwise_classified_3', ifelse(baselined, '', '_nb'), '.csv'),
+            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(valencewise_classified_3, file = paste0('../data/output/valencewise_classified_3', ifelse(baselined, '', '_nb'), '.csv'),
+            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(globally_classified_3, file = paste0('../data/output/globally_classified_3', ifelse(baselined, '', '_nb'), '.csv'),
+            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-save(stimuliwise_classified_2, file = paste0('../data/stimuliwise_classified_2.Rdata'))
-save(valencewise_classified_2, file = paste0('../data/valencewise_classified_2.Rdata'))
-save(globally_classified_2, file = paste0('../data/globally_classified_2.Rdata'))
+write.table(stimuliwise_classified_4, file = paste0('../data/output/stimuliwise_classified_4', ifelse(baselined, '', '_nb'), '.csv'),
+            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(algorithmwise_classified_4, file = paste0('../data/output/algorithmwise_classified_4', ifelse(baselined, '', '_nb'), '.csv'),
+            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(globally_classified_4, file = paste0('../data/output/globally_classified_4', ifelse(baselined, '', '_nb'), '.csv'),
+            sep = ';', dec = '.', row.names = FALSE, col.names = TRUE, quote = FALSE)
 
-save(stimuliwise_classified_3, file = paste0('../data/stimuliwise_classified_3.Rdata'))
-save(valencewise_classified_3, file = paste0('../data/valencewise_classified_3.Rdata'))
-save(globally_classified_3, file = paste0('../data/globally_classified_3.Rdata'))
 
-save(stimuliwise_classified_4, file = paste0('../data/stimuliwise_classified_4.Rdata'))
-save(valencewise_classified_4, file = paste0('../data/valencewise_classified_4.Rdata'))
-save(globally_classified_4, file = paste0('../data/globally_classified_4.Rdata'))
+save(stimuliwise_classified_1, file = paste0('../data/stimuliwise_classified_1', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(valencewise_classified_1, file = paste0('../data/valencewise_classified_1', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(globally_classified_1, file = paste0('../data/globally_classified_1', ifelse(baselined, '', '_nb'),'.Rdata'))
+
+save(stimuliwise_classified_2, file = paste0('../data/stimuliwise_classified_2', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(valencewise_classified_2, file = paste0('../data/valencewise_classified_2', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(globally_classified_2, file = paste0('../data/globally_classified_2', ifelse(baselined, '', '_nb'),'.Rdata'))
+
+save(stimuliwise_classified_3, file = paste0('../data/stimuliwise_classified_3', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(valencewise_classified_3, file = paste0('../data/valencewise_classified_3', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(globally_classified_3, file = paste0('../data/globally_classified_3', ifelse(baselined, '', '_nb'),'.Rdata'))
+
+save(stimuliwise_classified_4, file = paste0('../data/stimuliwise_classified_4', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(algorithmwise_classified_4, file = paste0('../data/algorithmwise_classified_4', ifelse(baselined, '', '_nb'),'.Rdata'))
+save(globally_classified_4, file = paste0('../data/globally_classified_4', ifelse(baselined, '', '_nb'),'.Rdata'))

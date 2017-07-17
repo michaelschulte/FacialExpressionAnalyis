@@ -123,7 +123,6 @@ osdata_baselined_median <- merge(osdata, osbaseline_median,
                                  
 
 ### apply baseline
-test <- idata_baselined_mean
 idata_baselined_mean[c(emotionColsAffectiva(),emotionColsFacet())] <-
   idata_baselined_mean[c(emotionColsAffectiva(),emotionColsFacet())] -
   idata_baselined_mean[paste0(c(emotionColsAffectiva(),emotionColsFacet()),"_baseline")]

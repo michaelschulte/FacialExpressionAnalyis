@@ -7,7 +7,7 @@ rm(list = ls())
 source('R_Packages+OwnFunctions.R')
 source('iMotionsHelperFunctions.R')
 
-load(file = '../data/surveydata/surveydata.Rdata')
+load(file = '../data/surveydata.Rdata')
 
 ### Ratings
 # grab wanted columns, aggregate

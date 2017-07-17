@@ -2,52 +2,51 @@
 
 is.installed <- function(mypkg) is.element(mypkg, installed.packages()[,1])
 
-check_packages <- c(
-    # 'afex',
-    # 'broome',
-    # 'combinat',
-    # 'car',
-    # 'plyr',
-    'dplyr',
-    # 'dataframes2xls',
-    # 'ez',
-    # 'gdata',
-    'ggplot2',
-    # 'ggmap',
-    # 'lme4',
-    'magrittr',
-    # 'mapproj',
-    # 'Matrix',
-    # 'multcomp',
-    # 'pbkrtest',
-    # 'pwr',
-    # 'psych',
-    # 'QuantPsyc',
-    # 'RecordLinkage',
-    # 'reshape2',
-    # 'robust',
-    # 'tseries',
-    # 'gridExtra',
-    # 'grid',
-    # 'stringr',
-    'tidyr'
-    # 'mousetrack'
+check_packages <- c(# 'afex',
+                    # 'broome',
+                    # 'combinat',
+                    # 'car',
+                    # 'plyr',
+                    'dplyr',
+                    # 'dataframes2xls',
+                    # 'ez',
+                    # 'gdata',
+                    'ggplot2',
+                    # 'ggmap',
+                    # 'lme4',
+                    'magrittr',
+                    # 'mapproj',
+                    # 'Matrix',
+                    # 'multcomp',
+                    # 'pbkrtest',
+                    # 'pwr',
+                    # 'psych',
+                    # 'QuantPsyc',
+                    # 'RecordLinkage',
+                    # 'reshape2',
+                    # 'robust',
+                    # 'tseries',
+                    # 'gridExtra',
+                    # 'grid',
+                    # 'stringr',
+                    'tidyr'
+                    # 'mousetrack'
 )
 number_packages <- length(check_packages)
 
 for(i in 1:number_packages) {
   if (is.installed(check_packages[i])) {
-          print(check_packages[i])
-          library(check_packages[i], character.only=TRUE)
+    print(check_packages[i])
+    library(check_packages[i], character.only=TRUE)
   } else {
-          install.packages(check_packages[i])
+    install.packages(check_packages[i])
   }
 }
 
 
 theme_presentation <- function (base_size = 26, base_family = "") {
-    theme_bw(base_size = base_size, base_family = base_family) %+replace%
-    theme(#axis.text = element_text(size = rel(0.8)),
+  theme_bw(base_size = base_size, base_family = base_family) %+replace%
+  theme(#axis.text = element_text(size = rel(0.8)),
         axis.ticks = element_line(colour = "black"),
         legend.key = element_rect(colour = "grey80"),
         panel.background = element_rect(fill = "white", colour = NA),
