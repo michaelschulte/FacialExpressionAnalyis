@@ -15,4 +15,4 @@ In order to replicate the findings of this validation study, each folder (`Study
 In the `R` folder, run each of the numbered scripts in order. After execution the respective results are located in `Study {1,2}/data/output`.
 
 ## Acknowledgments
-To be filled.
+We thank Adem Halimi and Elena von Wyttenbach for their help with the data collection.
