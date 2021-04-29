@@ -8,7 +8,7 @@ The goal of this study was to validate AFFDEX and FACET, two software based algo
 This repository contains the necessary code and data to replicate the study.
 
 ## Citation
-To be filled.
+Stöckli, S., Schulte-Mecklenbeck, M., Borer, S. et al. Facial expression analysis with AFFDEX and FACET: A validation study. Behav Res 50, 1446–1460 (2018). https://doi.org/10.3758/s13428-017-0996-1
 
 ## Replication
 In order to replicate the findings of this validation study, each folder (`Study 1` & `Study 2`) must be treated separately with the R working directory set to respective `R` folder.
